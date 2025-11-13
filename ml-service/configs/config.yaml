@@ -1,0 +1,18 @@
+# configs/config.yaml
+# Local-only configuration for preprocessing & features
+data_dir: "data"
+input_csv: "data\\potato_water_requirement.csv"
+timeseries_parquet: "data\\timeseries_clean.parquet"
+features_parquet: "data\\features_train.parquet"
+
+# Resampling frequency: '1D' (daily), '1H' (hourly), '15T' (15 minutes)
+resample_freq: "1D"
+
+# Irrigation system default (mm per hour)
+irrigation_rate_mm_per_hr: 8.0
+
+# Synthetic generator defaults (only used if you run the generator)
+synthetic:
+  year: 2024
+  seed: 42
+  setpoint: 0.30

@@ -1,10 +1,8 @@
-fastapi
-uvicorn[standard]
-motor 
-pandas
+pandas>=1.5
 numpy
 scikit-learn
-xgboost
 joblib
-pymongo
+fastapi
+uvicorn[standard]
 python-dotenv
+pydantic
