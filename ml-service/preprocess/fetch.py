@@ -11,15 +11,15 @@ import pandas as pd
 # CONFIG — no CLI needed
 # -------------------------
 SRC_URI = "mongodb://127.0.0.1:27017"
-SRC_DB = "esp_input"
-SRC_COLLECTION = "test_data"
+SRC_DB = "irrigation_db"
+SRC_COLLECTION = "sensordatas"
 
 DST_URI = "mongodb://127.0.0.1:27017"
-DST_DB = "irrigation"
-DST_COLLECTION = "test_data"
+DST_DB = "irrigation_db"
+DST_COLLECTION = "predictions"
 
 # SAVE CSV TO YOUR EXACT PATH
-CSV_OUTPUT = r"C:\Users\agrim\Downloads\smart-irrigation\ml-service\transferred_test_data.csv"
+CSV_OUTPUT = r"E:\smart-irrigation\ml-service\transferred_test_data.csv"
 
 LIMIT = 0   # 0 = fetch all docs
 
