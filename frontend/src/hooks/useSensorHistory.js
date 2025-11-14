@@ -1,25 +1,27 @@
 import { useEffect, useMemo, useState } from 'react';
-import { fetchLatestSensorData } from '../api/backend.js';
+import { fetchSensorHistory } from '../api/backend.js';
 
-export function useLiveSensorData({
+export function useSensorHistory({
   deviceId,
-  pollInterval = 10000
+  limit = 100,
+  pollInterval = 15000
 } = {}) {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [lastUpdated, setLastUpdated] = useState(null);
 
   const activeDevice = useMemo(() => deviceId?.trim() || undefined, [deviceId]);
 
   const load = async () => {
     try {
-      const latest = await fetchLatestSensorData(activeDevice);
-      setData(latest);
-      setLastUpdated(new Date());
+      const history = await fetchSensorHistory({
+        deviceId: activeDevice,
+        limit
+      });
+      setData(history);
       setError(null);
     } catch (err) {
-      setError(err.message || 'Unable to reach backend');
+      setError(err.message || 'Unable to load sensor history');
     } finally {
       setLoading(false);
     }
@@ -30,13 +32,13 @@ export function useLiveSensorData({
     const interval = setInterval(load, pollInterval);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeDevice, pollInterval]);
+  }, [activeDevice, limit, pollInterval]);
 
   return {
     data,
     error,
     loading,
-    lastUpdated,
     refresh: load
   };
 }
+

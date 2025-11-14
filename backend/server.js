@@ -17,13 +17,18 @@ mongoose.connect('mongodb://localhost:27017/irrigation_db')
 // -------------------------------
 // Sensor Data Schema
 // -------------------------------
-const sensorSchema = new mongoose.Schema({
-  deviceId: String,
-  temperature: Number,
-  humidity: Number,
-  moisture: Number,
-  timestamp: Date
-});
+const sensorSchema = new mongoose.Schema(
+  {
+    deviceId: String,
+    temperature: Number,
+    humidity: Number,
+    moisture: Number,
+    timestamp: { type: Date, default: Date.now }
+  },
+  {
+    collection: 'sensordatas'
+  }
+);
 const SensorData = mongoose.model('SensorData', sensorSchema);
 
 
@@ -51,12 +56,68 @@ app.post("/api/sensors/data", async (req, res) => {
       temperature: req.body.temperature,
       humidity: req.body.humidity,
       moisture: req.body.moisture,
-      timestamp: new Date(req.body.timestamp)
+      timestamp: req.body.timestamp ? new Date(req.body.timestamp) : new Date()
     });
 
     await entry.save();
     res.json({ success: true });
   } 
+  catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+
+// =====================================================================
+// 1b️⃣ Fetch Latest Sensor Reading
+// =====================================================================
+app.get("/api/sensors/latest", async (req, res) => {
+  try {
+    const { deviceId } = req.query;
+    const filter = deviceId ? { deviceId } : {};
+
+    const latest = await SensorData.findOne(filter).sort({ timestamp: -1 });
+
+    if (!latest) {
+      return res.json({
+        success: false,
+        error: "No sensor data available",
+        data: null
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        deviceId: latest.deviceId,
+        temperature: latest.temperature,
+        humidity: latest.humidity,
+        moisture: latest.moisture,
+        timestamp: latest.timestamp
+      }
+    });
+  }
+  catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+
+// =====================================================================
+// 1c️⃣ Fetch Sensor History
+// =====================================================================
+app.get("/api/sensors", async (req, res) => {
+  try {
+    const { deviceId, limit = 100 } = req.query;
+    const filter = deviceId ? { deviceId } : {};
+    const size = Math.min(Math.max(parseInt(limit, 10) || 100, 1), 500);
+
+    const data = await SensorData.find(filter)
+      .sort({ timestamp: -1 })
+      .limit(size);
+
+    res.json({ success: true, data });
+  }
   catch (e) {
     res.status(500).json({ success: false, error: e.message });
   }
