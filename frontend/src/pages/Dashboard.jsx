@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import MoistureChart from '../components/MoistureChart.jsx';
 import SensorHistoryTable from '../components/SensorHistoryTable.jsx';
+import PredictionCard from '../components/PredictionCard.jsx';
 import { useLiveSensorData } from '../hooks/useLiveSensorData.js';
 import { useSensorHistory } from '../hooks/useSensorHistory.js';
+import { useLivePredictions } from '../hooks/useLivePredictions.js';
 
 const safeRange = { min: 20, max: 45 };
 
@@ -23,9 +25,23 @@ function Dashboard() {
     pollInterval: 15000
   });
 
+  const {
+    data: prediction,
+    error: predictionError,
+    loading: predictionLoading,
+    lastUpdated: predictionLastUpdated,
+    isRefreshing: predictionRefreshing,
+    hasChanged: predictionChanged,
+    refresh: refreshPrediction
+  } = useLivePredictions({
+    deviceId,
+    pollInterval: 10000
+  });
+
   const handleRefresh = () => {
     refresh();
     refreshHistory();
+    refreshPrediction();
   };
 
   return (
@@ -50,9 +66,11 @@ function Dashboard() {
       {error && <p className="error-banner">{error}</p>}
       {historyLoading && <p className="loading">Loading sensor history…</p>}
       {historyError && <p className="error-banner">{historyError}</p>}
+      {predictionLoading && <p className="loading">Loading predictions…</p>}
+      {predictionError && <p className="error-banner">{predictionError}</p>}
 
-      {data && (
-        <div className="card-grid">
+      <div className="card-grid">
+        {data && (
           <MoistureChart
             moisture={data.moisture}
             temperature={data.temperature}
@@ -61,18 +79,18 @@ function Dashboard() {
             deviceId={data.deviceId}
             safeRange={safeRange}
           />
-        </div>
-      )}
+        )}
+        <PredictionCard 
+          prediction={prediction} 
+          lastUpdated={predictionLastUpdated}
+          isRefreshing={predictionRefreshing}
+          hasChanged={predictionChanged}
+        />
+      </div>
 
       {!loading && !error && !data && (
         <p className="error-banner">
           No readings found yet. Make sure your devices are posting data to `sensordatas`.
-        </p>
-      )}
-
-      {lastUpdated && (
-        <p className="meta">
-          Last checked: {lastUpdated.toLocaleString()}
         </p>
       )}
 

@@ -205,4 +205,74 @@ app.post("/api/prediction/mark-used/:deviceId", async (req, res) => {
 
 
 // =====================================================================
+// 5️⃣ Get Latest Prediction (for frontend display)
+// =====================================================================
+app.get("/api/predictions/latest", async (req, res) => {
+  try {
+    const { deviceId } = req.query;
+    const filter = deviceId ? { deviceId } : {};
+
+    const latest = await Prediction.findOne(filter)
+      .sort({ createdAt: -1 });
+
+    if (!latest) {
+      return res.json({
+        success: false,
+        error: "No predictions available",
+        data: null
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        deviceId: latest.deviceId,
+        waterMM: latest.waterMM,
+        pumpTimeSec: latest.pumpTimeSec,
+        predictionId: latest.predictionId,
+        used: latest.used,
+        createdAt: latest.createdAt,
+        pumpStatus: latest.waterMM > 0 ? "ON" : "OFF"
+      }
+    });
+  }
+  catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+
+// =====================================================================
+// 6️⃣ Get Prediction History
+// =====================================================================
+app.get("/api/predictions", async (req, res) => {
+  try {
+    const { deviceId, limit = 50 } = req.query;
+    const filter = deviceId ? { deviceId } : {};
+    const size = Math.min(Math.max(parseInt(limit, 10) || 50, 1), 200);
+
+    const predictions = await Prediction.find(filter)
+      .sort({ createdAt: -1 })
+      .limit(size);
+
+    res.json({
+      success: true,
+      data: predictions.map(p => ({
+        deviceId: p.deviceId,
+        waterMM: p.waterMM,
+        pumpTimeSec: p.pumpTimeSec,
+        predictionId: p.predictionId,
+        used: p.used,
+        createdAt: p.createdAt,
+        pumpStatus: p.waterMM > 0 ? "ON" : "OFF"
+      }))
+    });
+  }
+  catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+
+// =====================================================================
 app.listen(5000, () => console.log("API running at http://localhost:5000"));
