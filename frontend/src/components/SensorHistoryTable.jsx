@@ -1,3 +1,5 @@
+import { formatTimestampRaw } from '../utils/date.js';
+
 function SensorHistoryTable({ rows }) {
   if (!rows?.length) {
     return (
@@ -25,7 +27,14 @@ function SensorHistoryTable({ rows }) {
           <tbody>
             {rows.map((row) => (
               <tr key={row._id || row.timestamp}>
-                <td>{new Date(row.timestamp).toLocaleString()}</td>
+                <td>
+                  {row.timestamp
+                    ? (() => {
+                        const { time, date } = formatTimestampRaw(row.timestamp);
+                        return `${time} | ${date}`;
+                      })()
+                    : '—'}
+                </td>
                 <td>{row.deviceId || '—'}</td>
                 <td>{typeof row.moisture === 'number' ? row.moisture.toFixed(1) : '—'}</td>
                 <td>{typeof row.temperature === 'number' ? row.temperature.toFixed(1) : '—'}</td>

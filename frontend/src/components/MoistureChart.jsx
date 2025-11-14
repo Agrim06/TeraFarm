@@ -4,6 +4,8 @@ const getStatus = (value, { min, max }) => {
   return { label: 'In optimal range', tone: 'safe' };
 };
 
+import { formatTimestampRaw } from '../utils/date.js';
+
 function MoistureChart({
   moisture,
   temperature,
@@ -13,6 +15,7 @@ function MoistureChart({
   safeRange
 }) {
   const status = getStatus(moisture ?? 0, safeRange);
+  const timestampParts = formatTimestampRaw(timestamp);
 
   return (
     <article className="card">
@@ -28,7 +31,9 @@ function MoistureChart({
         </p>
         <p>
           <strong>Measured:</strong>{' '}
-          {timestamp ? new Date(timestamp).toLocaleString() : '—'}
+          {timestamp
+            ? `${timestampParts.time} / ${timestampParts.date}`
+            : '—'}
         </p>
         <p>
           <strong>Temperature:</strong>{' '}

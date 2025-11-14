@@ -35,7 +35,7 @@ function Dashboard() {
         <h1>Soil Moisture Monitor</h1>
       </header>
 
-      <div className="controls">
+      {/* <div className="controls">
         <input
           value={deviceId}
           placeholder="Filter by Device ID (optional)"
@@ -44,7 +44,7 @@ function Dashboard() {
         <button type="button" onClick={handleRefresh}>
           Refresh now
         </button>
-      </div>
+      </div> */}
 
       {loading && <p className="loading">Looking for the latest moisture reading…</p>}
       {error && <p className="error-banner">{error}</p>}
