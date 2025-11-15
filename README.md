@@ -3,7 +3,11 @@
 > An intelligent IoT-based irrigation system that combines real-time sensor monitoring, machine learning predictions, and automated pump control to optimize water usage in agricultural applications.
 
 ![TeraFarm Dashboard]
-{Screenshots}
+![WhatsApp Image 2025-11-15 at 22 03 12_e8aecc7c](https://github.com/user-attachments/assets/6789265b-5ab1-4bc3-8d13-64c3cc277cc0)
+![WhatsApp Image 2025-11-15 at 22 04 14_8eb3c4bb](https://github.com/user-attachments/assets/df1df843-1876-4372-8ba6-1057b75db6cb)
+![WhatsApp Image 2025-11-15 at 22 03 45_46219ce2](https://github.com/user-attachments/assets/b62cb3a2-5548-4a52-869e-1cf93f3b159f)
+![WhatsApp Image 2025-11-15 at 22 04 03_c57c1613](https://github.com/user-attachments/assets/4e8029c2-7473-470f-b105-c10d43a871f4)
+
 
 ## 🌟 Features
 
